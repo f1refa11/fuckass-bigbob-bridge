@@ -61,7 +61,7 @@ def reset_queue(group_id: int = None):
         for group in CFG.sferum_groups:
             history = api.messages.get_history(peer_id=group, count=200, offset=0) 
             messages = history['response']['items']
-            DB[str(group_id)] = list(range(messages[0]["conversation_message_id"]+1))
+            DB[str(group)] = list(range(messages[0]["conversation_message_id"]+1))
             
     database.SAVE(DB)
-    
+    return "al gud"

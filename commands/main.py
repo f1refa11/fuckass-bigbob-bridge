@@ -3,6 +3,7 @@ from aiogram.types import Message, CallbackQuery, InlineKeyboardButton, InlineKe
 from aiogram.filters import Command, CommandStart
 
 from utils import sferum
+from objects.bot import dp
 
 router = Router()
 
@@ -11,7 +12,7 @@ async def start_handler(msg: Message):
     await msg.answer("go fuck yourself")
     await sferum.get_last_messages()
     
-@router.callback_query(F.data == "reset")
+@dp.message(Command("reset"))
 async def reser_queue(query: CallbackQuery):
-    result = await sferum.reset_queue()
+    result = sferum.reset_queue()
     await query.answer(result)
