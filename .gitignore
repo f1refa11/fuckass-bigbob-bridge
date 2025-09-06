@@ -2,6 +2,7 @@ __pycache__
 .env
 .venv
 config.json
-simple_database.json
+history.json
 .vscode
 .idea
+history.json
