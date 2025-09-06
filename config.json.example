@@ -1,4 +1,5 @@
 {
-    "tg_chat_id": "group_id for resend", 
-    "sferum_groups": [123, 123]
+    "tg_chat_id": minus(!) group_id, 
+    "sferum_groups": [123, 123],
+    "_existing_groups": [] #dont touch
 }
