@@ -5,7 +5,6 @@ from aiogram.types import BotCommand
 from commands import routers_pack
 
 from objects.bot import bot, dp
-from objects import database
 import sys
 
 from datetime import datetime

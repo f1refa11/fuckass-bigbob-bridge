@@ -31,6 +31,7 @@ async def get_last_messages():
             return_data.append({"group_id": group, "group_name": history["response"]["conversations"][0]["chat_settings"]["title"], "messages":covered_msg})
             DB[str(group)] = messages[-1]["conversation_message_id"]
             database.SAVE(DB)
-        else: pass
+        else:
+            pass
         
     pprint(return_data)
