@@ -1,6 +1,6 @@
-from aiogram import F, Router
-from aiogram.types import Message, CallbackQuery, InlineKeyboardButton, InlineKeyboardMarkup, KeyboardButton, ReplyKeyboardMarkup, ReplyKeyboardRemove
-from aiogram.filters import Command, CommandStart
+from aiogram import Router
+from aiogram.types import Message
+from aiogram.filters import CommandStart
 
 from utils import sferum
 from objects.bot import dp

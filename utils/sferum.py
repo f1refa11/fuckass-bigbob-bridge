@@ -1,3 +1,7 @@
+import logging
+from pprint import pformat
+import requests
+
 import SferumAPI as ass
 from pprint import pprint
 import os
@@ -6,10 +10,14 @@ from dotenv import load_dotenv
 from objects import config, database
 from utils import sending
 
+# load Sferum user token from .env
 load_dotenv()
 SFERUM_TOKEN = os.getenv("SFERUM_TOKEN")
 
-api = ass.SferumAPI(remixdsid=SFERUM_TOKEN) 
+# SferumAPI yuppie
+api = ass.SferumAPI(remixdsid=SFERUM_TOKEN)
+
+FETCH_HEADERS = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36"
 
 def check_groups():
     CFG = config.GET()
@@ -21,7 +29,9 @@ def check_groups():
     config.SAVE(CFG)
 
 async def get_last_messages():
-    print("gay sex")
+    logging.info("Fetching all group messages")
+    
+    # fetch config and DB data
     CFG = config.GET()
     DB = database.GET()
     
@@ -29,8 +39,20 @@ async def get_last_messages():
     
     for group in CFG.sferum_groups:
         history = api.messages.get_history(peer_id=group, count=200, offset=0) 
+        logging.info(f"Sferum group ID: {group}")
+        
+        # fetch last 200 messages(should be enough) bruh it maximum
+        # TODO: `count` argument value as a config/const
+        history = api.messages.get_history(peer_id=group, count=200, offset=0)
+        
+        logging.info(f"Sferum group name: {history["response"]["conversations"][0]["chat_settings"]["title"]}")
+        
+        # group chat PARTICIPANTS
         users_origin = history['response']['profiles']
-        users = {uo["id"]: f"{uo['last_name']} {uo['first_name']}" for uo in users_origin}
+        users = {user["id"]: f"{user['last_name']} {user['first_name']}" for user in users_origin}
+        logging.debug(f"Users: {pformat(users)}")
+        
+        # group chat HISTORY
         messages = history['response']['items']
         messages.reverse()
         sended_messages = DB[str(group)] if str(group) in DB.keys() else []
@@ -41,7 +63,48 @@ async def get_last_messages():
             pass
         covered_messages = []
         for msg in filtered_msg:
-            covered_messages.append({"msg_id": msg["conversation_message_id"], "text": msg["text"], "attachments": msg["attachments"], "author": users[msg["from_id"]]})
+            
+            attachmentsRaw = msg["attachments"] # bloated
+            attachments = []
+            for attachment in attachmentsRaw:
+                match attachment["type"]:
+                    case "photo":
+                        # because we need to somehow insert the actual images, not URLs, we save them as temporary
+                        # TODO: maybe make it as a separate module, like `tmpfiles.py`
+                        # response = requests.get(
+                        #     attachment["photo"]["orig_photo"]["url"], headers = {"user-agent": FETCH_HEADERS}
+                        # )
+                        #
+                        #
+                        # if response.status_code == 200:
+                        #     with open("", 'wb') as f:
+                        #         f.write(response.content)
+                        attachments.append({
+                            "type": "photo",
+                            "url": attachment["photo"]["orig_photo"]["url"],
+                        })
+                    case "video":
+                        attachments.append({
+                            "type": "video",
+                            "url_share": attachment["video"]["share_url"],
+                            "url_player": attachment["video"]["player"],
+                        })
+                    case "doc":
+                        attachments.append({
+                            "type": "doc",
+                            "url": attachment["doc"]["url"],
+                            "url_private": attachment["doc"]["private_url"],
+                        })
+                    case "poll":
+                        attachments.append({
+                            "type": "poll",
+                            "question": attachment["poll"]["question"],
+                            "answers": [answer["text"] for answer in attachment["poll"]["answers"]],
+                            "end_date": attachment["poll"]["end_date"]
+                        })
+                attachments.append(attachment)
+            
+            covered_messages.append({"msg_id": msg["conversation_message_id"], "text": msg["text"], "attachments": attachments, "author": users[msg["from_id"]]})
             sended_messages.append(msg["conversation_message_id"])   
         return_data.append({"group_id": group, "group_name": history["response"]["conversations"][0]["chat_settings"]["title"], "messages":covered_messages})
         DB[str(group)] = sended_messages

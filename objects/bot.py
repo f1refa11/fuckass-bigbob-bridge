@@ -6,9 +6,11 @@ from aiogram.fsm.storage.memory import MemoryStorage
 import os
 from dotenv import load_dotenv
 
+# get TG bot token from .env
 load_dotenv()
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 
+# main Bot instance
 bot = Bot(token=BOT_TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML)) 
 
 dp = Dispatcher(storage=MemoryStorage())
