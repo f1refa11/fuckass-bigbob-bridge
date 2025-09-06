@@ -1,6 +1,6 @@
 import json
 
-file_locate = './simple_database.json'
+file_locate = './history.json'
     
 def GET() -> dict:
     with open(file_locate, "r", encoding="utf-8") as file:
