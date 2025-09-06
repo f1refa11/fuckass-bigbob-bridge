@@ -4,3 +4,4 @@ __pycache__
 config.json
 simple_database.json
 .vscode
+.idea
