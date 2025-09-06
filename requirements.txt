@@ -1,4 +1,9 @@
 aiogram
 telethon
 
+SferumAPI == 0.1.1
+requests>=2.20.0
+websockets>=10.0
+json2python_models>=0.3.1
+
 python-dotenv
