@@ -11,6 +11,15 @@ SFERUM_TOKEN = os.getenv("SFERUM_TOKEN")
 
 api = ass.SferumAPI(remixdsid=SFERUM_TOKEN) 
 
+def check_groups():
+    CFG = config.GET()
+    if CFG.existing_groups != CFG.sferum_groups:
+        differ = [gid for gid in CFG.sferum_groups if gid not in CFG.existing_groups]
+        for gid in differ:
+            reset_queue(gid)
+            CFG.existing_groups.append(gid)
+    config.SAVE(CFG)
+
 async def get_last_messages():
     print("gay sex")
     CFG = config.GET()
@@ -40,5 +49,19 @@ async def get_last_messages():
 
     await sending.sferum_messages(return_data)
     
-async def get_last_message_id():
-    return
+def reset_queue(group_id: int = None):
+    CFG = config.GET()
+    DB = database.GET()
+    
+    if group_id:
+        history = api.messages.get_history(peer_id=group_id, count=200, offset=0) 
+        messages = history['response']['items']
+        DB[str(group_id)] = list(range(messages[0]["conversation_message_id"]+1))
+    else:
+        for group in CFG.sferum_groups:
+            history = api.messages.get_history(peer_id=group, count=200, offset=0) 
+            messages = history['response']['items']
+            DB[str(group_id)] = list(range(messages[0]["conversation_message_id"]+1))
+            
+    database.SAVE(DB)
+    

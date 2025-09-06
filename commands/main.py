@@ -11,3 +11,7 @@ async def start_handler(msg: Message):
     await msg.answer("go fuck yourself")
     await sferum.get_last_messages()
     
+@router.callback_query(F.data == "reset")
+async def reser_queue(query: CallbackQuery):
+    result = await sferum.reset_queue()
+    await query.answer(result)
