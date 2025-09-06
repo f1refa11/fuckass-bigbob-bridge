@@ -5,11 +5,16 @@ from aiogram.types import BotCommand
 from commands import routers_pack
 
 from objects.bot import bot, dp
+from utils import sferum
 import sys
 
 from datetime import datetime
 
+import warnings
+
 async def main():
+    warnings.simplefilter("always")
+    
     print("=== === === BOT START === === ===")
     print(f"python version: {sys.version.split()[0]}")
     print(f"started at: {datetime.now()}")
@@ -25,6 +30,8 @@ async def main():
     botmy = await bot.get_me()
     print(f"bot username: {botmy.username}")
     
+    sferum.check_groups()
+  
     await bot.delete_webhook(drop_pending_updates=True)
     
     # set commands from the list
