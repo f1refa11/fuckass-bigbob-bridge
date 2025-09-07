@@ -38,9 +38,6 @@ async def get_last_messages():
     return_data = []
     
     for group in CFG.sferum_groups:
-        history = api.messages.get_history(peer_id=group, count=200, offset=0) 
-        logging.info(f"Sferum group ID: {group}")
-        
         # fetch last 200 messages(should be enough) bruh it maximum
         # TODO: `count` argument value as a config/const
         history = api.messages.get_history(peer_id=group, count=200, offset=0)
