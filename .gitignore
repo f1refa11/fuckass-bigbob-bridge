@@ -2,7 +2,8 @@ __pycache__
 .env
 .venv
 config.json
-history.json
 .vscode
 .idea
 history.json
+temp_video
+temp_doc
