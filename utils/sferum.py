@@ -106,7 +106,6 @@ async def get_last_messages():
                             "answers": [answer["text"] for answer in attachment["poll"]["answers"]],
                             "end_date": attachment["poll"]["end_date"]
                         })
-                attachments.append(attachment)
             
             covered_messages.append({"msg_id": msg["conversation_message_id"], "text": msg["text"], "attachments": attachments, "author": users[msg["from_id"]]})
             sended_messages.append(msg["conversation_message_id"])   
