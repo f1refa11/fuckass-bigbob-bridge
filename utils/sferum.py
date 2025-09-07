@@ -107,10 +107,20 @@ async def get_last_messages():
                             "end_date": attachment["poll"]["end_date"]
                         })
             
-            covered_messages.append({"msg_id": msg["conversation_message_id"], "text": msg["text"], "attachments": attachments, "author": users[msg["from_id"]]})
-            sended_messages.append(msg["conversation_message_id"])   
-        return_data.append({"group_id": group, "group_name": history["response"]["conversations"][0]["chat_settings"]["title"], "messages":covered_messages})
-        DB[str(group)] = sended_messages
+            logging.info(pformat(attachments))
+            covered_messages.append({
+                "msg_id": msg["conversation_message_id"],
+                "text": msg["text"],
+                "attachments": attachments,
+                "author": users[msg["from_id"]]
+            })
+            sent_messages.append(msg["conversation_message_id"])
+        return_data.append({
+            "group_id": group,
+            "group_name": history["response"]["conversations"][0]["chat_settings"]["title"],
+            "messages": covered_messages
+        })
+        DB[str(group)] = sent_messages
         database.SAVE(DB)
 
     await sending.sferum_messages(return_data)
