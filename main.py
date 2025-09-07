@@ -2,6 +2,8 @@ import asyncio
 import logging
 
 from aiogram.types import BotCommand
+
+import fetch_task
 from commands import routers_pack
 
 from objects.bot import bot, dp
@@ -36,6 +38,8 @@ async def main():
     
     # set commands from the list
     await bot.set_my_commands(commands=commands)
+    
+    asyncio.create_task(fetch_task.fetch_task())
     
     # start the bot logic
     await dp.start_polling(bot, allowed_updates=dp.resolve_used_update_types())
