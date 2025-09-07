@@ -57,15 +57,16 @@ async def get_last_messages():
         # group chat HISTORY
         messages = history['response']['items']
         messages.reverse()
-        sended_messages = DB[str(group)] if str(group) in DB.keys() else []
-        smsg_set = set(sended_messages)
+        logging.info(f"Fetched {len(messages)} messages")
+        
+        sent_messages = DB[str(group)] if str(group) in DB.keys() else []
+        smsg_set = set(sent_messages)
         filtered_msg = [msg for msg in messages if msg["conversation_message_id"] not in smsg_set and msg["from_id"] > 0]
         if len(filtered_msg) == 0:
-            print("nothing")
+            logging.info("nothing")
             pass
         covered_messages = []
         for msg in filtered_msg:
-            
             attachmentsRaw = msg["attachments"] # bloated
             attachments = []
             for attachment in attachmentsRaw:
@@ -81,6 +82,7 @@ async def get_last_messages():
                         # if response.status_code == 200:
                         #     with open("", 'wb') as f:
                         #         f.write(response.content)
+                        logging.info("picture")
                         attachments.append({
                             "type": "photo",
                             "url": attachment["photo"]["orig_photo"]["url"],
