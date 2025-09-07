@@ -42,7 +42,12 @@ async def get_last_messages():
         # TODO: `count` argument value as a config/const
         history = api.messages.get_history(peer_id=group, count=200, offset=0)
         
-        logging.info(f"Sferum group name: {history["response"]["conversations"][0]["chat_settings"]["title"]}")
+        try:
+            logging.info(f"Sferum group ID: {group}")
+            logging.info(f"Sferum group name: {history["response"]["conversations"][0]["chat_settings"]["title"]}")
+        except KeyError:
+            logging.error(f"Abnormal response from the server: {pformat(history)}")
+            return
         
         # group chat PARTICIPANTS
         users_origin = history['response']['profiles']
