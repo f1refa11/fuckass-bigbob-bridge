@@ -92,12 +92,13 @@ async def get_last_messages():
                             "type": "video",
                             "url_share": attachment["video"]["share_url"],
                             "url_player": attachment["video"]["player"],
+                            "url": attachment["video"]["files"]["dash_ondemand"],
                         })
                     case "doc":
                         attachments.append({
                             "type": "doc",
                             "url": attachment["doc"]["url"],
-                            "url_private": attachment["doc"]["private_url"],
+                            "filename": attachment["doc"]["title"],
                         })
                     case "poll":
                         attachments.append({
